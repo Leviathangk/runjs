@@ -1,1 +1,1 @@
-from grun_js.runjs import RunJs
+from gexecjs.runjs import RunJs

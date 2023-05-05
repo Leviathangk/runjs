@@ -8,7 +8,7 @@ import subprocess
 
 
 class RunJs:
-    def __init__(self, path: str = None, content: str = None, encoding: str = 'utf-8', back_status: bool = False):
+    def __init__(self, filepath: str = None, content: str = None, encoding: str = 'utf-8', back_status: bool = False):
         """
 
         :param path: js 路径
@@ -16,21 +16,21 @@ class RunJs:
         :param encoding: 编码格式
         :param back_status: 是否返回执行状态
         """
-        self._path = path
+        self._filepath = filepath
         self._encoding = encoding
         self._back_status = back_status
 
         # 检查文件是否存在
-        if self._path is not None:
-            if not os.path.exists(self._path):
-                raise FileNotFoundError(f'文件不存在：{self._path}')
+        if self._filepath is not None:
+            if not os.path.exists(self._filepath):
+                raise FileNotFoundError(f'文件不存在：{self._filepath}')
             else:
-                with open(path, 'r', encoding=self._encoding) as f:
+                with open(self._filepath, 'r', encoding=self._encoding) as f:
                     self._content = f.read()
         else:
             self._content = content
 
-        if self._path is None and self._content is None:
+        if self._filepath is None and self._content is None:
             raise NotImplementedError('请输入 js 路径或者 js 内容！')
 
     def run(self, *args, timeout: int = 5):
@@ -77,7 +77,7 @@ class RunJs:
 
 
 if __name__ == '__main__':
-    # run_js = RunJs(path='test.js')
+    # run_js = RunJs(filepath='test.js')
     run_js = RunJs(content='''
         function getCookie(){
             return arguments

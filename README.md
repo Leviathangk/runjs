@@ -5,13 +5,13 @@
 # 安装
 
 ```
-pip install -U grun_js
+pip install -U gexecjs
 ```
 
 # 示例
 
 ```
-    # run_js = RunJs(path='test.js')
+    # run_js = RunJs(filepath='test.js')
     run_js = RunJs(content='''
         function getCookie(){
             return arguments
