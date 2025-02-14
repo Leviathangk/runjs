@@ -5,9 +5,10 @@ import subprocess
 
 '''
     代替 execjs 执行 js，为了指定编码而写
-    支持异步调用，只要你调用的函数会返回结果就会正常返回
 '''
 
+class NoResult(Exception):
+    pass
 
 class RunJs:
     def __init__(self, filepath: str = None, content: str = None, encoding: str = 'utf-8', back_status: bool = False):
@@ -76,7 +77,12 @@ class RunJs:
 
         if self._back_status:
             return {'status': True, 'result': json.loads(stdout.split('\n')[-1])['nodeBack']}
-        return json.loads(re.findall("{.runjsNodeBack.:..+?.}",stdout)[0])["runjsNodeBack"]
+        if "runjsNodeBack" not in stdout:
+            raise NoResult(f"未获取到结果，以下是输出日志：\n{stdout}")
+        re_result = re.findall("{.runjsNodeBack.:..+?.}",stdout)
+        if len(re_result) == 0:
+            raise NoResult(f"未匹配到结果，以下是输出日志：\n{stdout}")
+        return json.loads(re_result[0])["runjsNodeBack"]
 
 
 if __name__ == '__main__':
