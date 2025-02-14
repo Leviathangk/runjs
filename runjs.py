@@ -1,9 +1,11 @@
 import os
+import re
 import json
 import subprocess
 
 '''
     代替 execjs 执行 js，为了指定编码而写
+    支持异步调用，只要你调用的函数会返回结果就会正常返回
 '''
 
 
@@ -54,9 +56,10 @@ class RunJs:
         new_content = '''
                 (function(){
                     const runJsProcess = process;
+                    const runJsConsoleLog = console.log;
                     %s
-                    console.log('nodeBack over!'); // 存在的意义就是下面换行用
-                    runJsProcess.stdout.write(JSON.stringify({nodeBack:%s}));
+                    runJsConsoleLog('nodeBack over!'); // 存在的意义就是下面换行用
+                    runJsProcess.stdout.write(JSON.stringify({runjsNodeBack:%s}));
                 })()
             ''' % (self._content, return_str)
 
@@ -73,7 +76,7 @@ class RunJs:
 
         if self._back_status:
             return {'status': True, 'result': json.loads(stdout.split('\n')[-1])['nodeBack']}
-        return json.loads(stdout.split('\n')[-1])['nodeBack']
+        return json.loads(re.findall("{.runjsNodeBack.:..+?.}",stdout)[0])["runjsNodeBack"]
 
 
 if __name__ == '__main__':
