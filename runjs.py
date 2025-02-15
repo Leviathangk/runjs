@@ -7,15 +7,17 @@ import subprocess
     代替 execjs 执行 js，为了指定编码而写
 '''
 
+
 class NoResult(Exception):
     pass
+
 
 class RunJs:
     def __init__(self, filepath: str = None, content: str = None, encoding: str = 'utf-8', back_status: bool = False):
         """
 
-        :param path: js 路径
-        :param content: js
+        :param filepath: js 路径
+        :param content: js 内容
         :param encoding: 编码格式
         :param back_status: 是否返回执行状态
         """
@@ -60,7 +62,7 @@ class RunJs:
                     const runJsConsoleLog = console.log;
                     %s
                     runJsConsoleLog('nodeBack over!'); // 存在的意义就是下面换行用
-                    runJsProcess.stdout.write(JSON.stringify({runjsNodeBack:%s}));
+                    runJsProcess.stdout.write(JSON.stringify({runJsNodeBack:%s}));
                 })()
             ''' % (self._content, return_str)
 
@@ -77,12 +79,12 @@ class RunJs:
 
         if self._back_status:
             return {'status': True, 'result': json.loads(stdout.split('\n')[-1])['nodeBack']}
-        if "runjsNodeBack" not in stdout:
+        if "runJsNodeBack" not in stdout:
             raise NoResult(f"未获取到结果，以下是输出日志：\n{stdout}")
-        re_result = re.findall("{.runjsNodeBack.:..+?.}",stdout)
+        re_result = re.findall("{.runJsNodeBack.:..+?.}", stdout)
         if len(re_result) == 0:
             raise NoResult(f"未匹配到结果，以下是输出日志：\n{stdout}")
-        return json.loads(re_result[0])["runjsNodeBack"]
+        return json.loads(re_result[0])["runJsNodeBack"]
 
 
 if __name__ == '__main__':
